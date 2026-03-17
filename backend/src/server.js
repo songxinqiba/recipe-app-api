@@ -30,7 +30,6 @@ const corsOptions = {
     allowedHeaders: ["Content-Type", "Authorization"],
 };
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
 /* 告诉服务器，可以接受json格式的请求体 */
 app.use(express.json());
 
