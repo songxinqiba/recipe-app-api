@@ -1,5 +1,5 @@
 import express from "express";
-import cors from "cors";
+import job from "./config/cron.js";
 import { and, eq } from "drizzle-orm";
 import {ENV} from "./config/env.js";
 import {db} from "./config/db.js";
@@ -8,10 +8,11 @@ import { favoritesTable } from "./db/schema.js";
 /* 创建express应用实例来定义路由，启动服务器，注册中间件 */
 const app=express();
 const PORT=ENV.PORT;
+if(ENV.NODE_ENV==="production") job.start();
 
 // CORS safety net: ensure web preflight (OPTIONS) always returns CORS headers.
 // This helps when deploying to platforms like Render and developing from `http://localhost:8081`.
-app.use((req, res, next) => {
+/* app.use((req, res, next) => {
     const origin = req.headers.origin;
     res.setHeader("Access-Control-Allow-Origin", origin || "*");
     res.setHeader("Vary", "Origin");
@@ -28,8 +29,8 @@ const corsOptions = {
     origin: true,
     methods: ["GET", "POST", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-};
-app.use(cors(corsOptions));
+}; */
+/* app.use(cors(corsOptions)); */
 /* 告诉服务器，可以接受json格式的请求体 */
 app.use(express.json());
 
@@ -37,7 +38,7 @@ app.get("/api/health",(req,res)=>{
     res.status(200).json({success:true});
 });
 
-// Proxy TheMealDB for web builds (avoids browser CORS restrictions)
+/* // Proxy TheMealDB for web builds (avoids browser CORS restrictions)
 app.use("/api/mealdb", async (req, res, next) => {
     if (req.method !== "GET") return next();
     try {
@@ -81,7 +82,7 @@ app.use("/api/mealdb", async (req, res, next) => {
                   }),
         });
     }
-});
+}); */
 
 app.post("/api/favorites",async(req,res)=>{
     try {
